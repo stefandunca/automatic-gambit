@@ -1,0 +1,17 @@
+version: '3'
+
+services:
+    #
+    #
+    mosquitto:
+        image: eclipse-mosquitto
+        ports:
+        - 1883:1883
+        - 9001:9001
+        volumes:
+        - ${DATA_FOLDER}/mosquitto/data:/mosquitto/data
+        - ${DATA_FOLDER}/mosquitto/logs:/mosquitto/logs
+        - ./.mqtt.config:/mosquitto/config
+        stdin_open: true # docker run -i
+        tty: true        # docker run -t  
+        restart: unless-stopped

@@ -1,0 +1,5 @@
+# Example .env file
+#
+
+# Defaults to root test data  
+DATA_FOLDER=./../../.data/
