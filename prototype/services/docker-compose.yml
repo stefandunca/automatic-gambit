@@ -17,23 +17,26 @@ services:
   #
   zigbee2mqtt:
     container_name: zigbee2mqtt
-    image: koenkk/zigbee2mqtt
+    image: koenkk/zigbee2mqtt:latest-dev
     volumes:
-      - ./data:/app/data
-      - /run/udev:/run/udev:ro
-    restart: always
-    network_mode: host
+      - ${DATA_FOLDER}/zigbee2mqtt/data:/app/data
+      #- /run/udev:/run/udev:ro
+    ports:
+      - 8080:8080   # Frontend port
+    restart: unless-stopped
+    #network_mode: host
     #privileged: true
     environment:
+      - ZIGBEE2MQTT_CONFIG_MQTT_BASE_TOPIC=zigbee2mqtt
+      #- ZIGBEE2MQTT_CONFIG_MQTT_USER=
+      #- ZIGBEE2MQTT_CONFIG_MQTT_PASSWORD=
+      - ZIGBEE2MQTT_CONFIG_MQTT_SERVER=mqtt://mosquitto:1883
+      - ZIGBEE2MQTT_CONFIG_MQTT_CLIENT_ID=z2mqtt
+      - ZIGBEE2MQTT_CONFIG_SERIAL_PORT=tcp://10.12.1.8:8888
+      - ZIGBEE2MQTT_CONFIG_SERIAL_ADAPTER=ezsp
+      #- ZIGBEE2MQTT_CONFIG_SERIAL_BAUDRATE=57600
+      - ZIGBEE2MQTT_CONFIG_PERMIT_JOIN=false
+      - ZIGBEE2MQTT_CONFIG_ADVANCED_LOG_LEVEL=debug
       - TZ=Europe/Zurich
-  #
-  #
-  homeassistant:
-    container_name: homeassistant
-    image: "ghcr.io/home-assistant/home-assistant:stable"
-    volumes:
-      - /PATH_TO_YOUR_CONFIG:/config
-      - /etc/localtime:/etc/localtime:ro
-    restart: unless-stopped
-    privileged: true
-    network_mode: host
+    depends_on:
+      - mosquitto
